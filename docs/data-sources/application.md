@@ -1,8 +1,4 @@
----
-page_title: "Get applications"
----
-
-# Datasource: application
+# application
 
 VMware SD-WAN provides an initial Application Map with possible applications.
 Use this datasource to get the ID of a specific application. This ID can be used as a reference in other resources.

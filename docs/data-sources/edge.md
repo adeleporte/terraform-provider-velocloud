@@ -1,8 +1,4 @@
----
-page_title: "Get edges"
----
-
-# Datasource: edge
+# edge
 
 This datasource is used to fetch status information about a specific edge
 

@@ -1,4 +1,4 @@
-# Terraform Velocloud Provider
+# Velocloud Provider
 
 This is the repository for the Terraform Velocloud Provider, which one can use with
 Terraform to work with [VMware Velocloud SDWAN][vmware-nsxt].

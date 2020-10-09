@@ -1,8 +1,4 @@
----
-page_title: "Manage business policies"
----
-
-# Resource: business_policies
+# business_policies
 VMware SD-WAN provides an enhanced Quality of Service feature called Business Policy. This feature is defined using the Business Policy tab in a Profile or at the Edge override level.
 Based on the business policy configuration, VMware SD-WAN examines the traffic being used, identifies the Application behavior, the business service objective required for a given app (High, Med, or Low), and the Edge WAN Link conditions. Based on this, the Business Policy optimizes Application behavior driving queuing, bandwidth utilization, link steering, and the mitigation of network errors.
 

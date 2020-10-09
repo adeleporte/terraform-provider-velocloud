@@ -1,8 +1,4 @@
----
-page_title: "Manage port groups"
----
-
-# Resource: port_group
+# port_group
 
 An port group consists of a range of TCP/UDP ports. When you create business policies and firewall rules, you can define the rules for a range of TCP/UDP ports, by including the port groups in the rule definitions.
 

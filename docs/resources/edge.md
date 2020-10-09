@@ -1,8 +1,4 @@
----
-page_title: "Manage edges"
----
-
-# Resource: edge
+# edge
 
 This resource is used to manage edges
 

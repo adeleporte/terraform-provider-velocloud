@@ -1,8 +1,4 @@
----
-page_title: "Get address groups"
----
-
-# Datasource: address_group
+# address_group
 
 An address group consists of a range of IP addresses. When you create business policies and firewall rules, you can define the rules for a range of IP addresses, by including the address groups in the rule definitions.
 

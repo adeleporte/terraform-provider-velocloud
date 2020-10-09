@@ -1,8 +1,4 @@
----
-page_title: "Get profiles"
----
-
-# Datasource: profile
+# profile
 
 Profiles provide a composite of the configurations created in Networks and Network Services. It also adds configuration for Business Policy and Firewall rules. Use this datasource to get the ID of the profile, to be used as a reference by other resources (i.e business_policies)
 
