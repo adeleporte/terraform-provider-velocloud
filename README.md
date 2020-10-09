@@ -50,6 +50,23 @@ more][provider-vc] on provider version control.
 
 [provider-vc]: https://www.terraform.io/docs/configuration/providers.html#provider-versions
 
+# Installation (automatic)
+
+
+```hcl
+terraform {
+  required_providers {
+    velocloud = {
+      versions = ["0.1"]
+      source = "vcn.cloud/edu/velocloud"
+    }
+  }
+}
+
+provider velocloud {
+}
+```
+
 # Installation (manual)
 
 
@@ -96,8 +113,8 @@ In order to use the Velocloud Terraform provider you must first configure the pr
 
 ```hcl
 provider "velocloud" {
-  vco     = "vco.vcn.net"
-  token    = "jhkjlhjkhjkhjkhjkhhjkhkjhkjhjkhkjhkjhjkhjkh"
+  vco       = "vco.vcn.net"
+  token     = "jhkjlhjkhjkhjkhjkhhjkhkjhkjhjkhkjhkjhjkhjkh"
 }
 ```
 
