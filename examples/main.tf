@@ -14,6 +14,7 @@ data "velocloud_profile" "newtf" {
     name = "newtf"
 }
 
+/*
 data "velocloud_address_group" "gold" {
     name = "Gold"
 }
@@ -113,6 +114,7 @@ resource "velocloud_business_policies" "newtfbp" {
 
 }
 
+
 output "newtf" {
     value = data.velocloud_profile.newtf
 }
@@ -123,4 +125,41 @@ output "newtfbp" {
 
 output "edge1" {
     value = data.velocloud_edge.edge1
+}
+
+*/
+
+data "velocloud_edge" "edge2" {
+    name = "Antoine-HomeOffice"
+}
+
+
+resource "velocloud_edge" "edge1" {
+
+  configurationid               = data.velocloud_profile.newtf.id
+  modelnumber                   = "virtual"
+
+  name                          = "edge-test3"
+
+  site {
+    name                        = "site1"
+    contactname                 = "Antoine DELEPORTE2"
+    contactphone                = "+331010101010"
+    contactmobile               = "+336010101010"
+    contactemail                = "adeleporte@vmware.com"
+    streetaddress               = "Terrasse Boildieu"
+    city                        = "Paris"
+    country                     = "France"
+
+    shippingstreetaddress       = "Terrasse Boildieu"
+    shippingcity                = "Paris"
+    shippingcountry             = "France"
+  
+    lat                         = 10.4567
+    lon                         = 20.23
+
+    shippingsameaslocation      = true
+  }
+
+  
 }
