@@ -15,6 +15,8 @@ website][tf-website] and the [GitHub project page][tf-github].
 Documentation on the Velocloud platform can be found at the [VMware SD-WAN Documentation page](https://www.vmware.com/fr/products/sd-wan-by-velocloud.html)
 
 
+Full provider documentation is now on the Terraform Registry [https://registry.terraform.io/providers/adeleporte/velocloud/latest/docs](https://registry.terraform.io/providers/adeleporte/velocloud/latest/docs)
+
 # Using the Provider
 
 The latest version of this provider requires Terraform v0.12 or higher to run.
