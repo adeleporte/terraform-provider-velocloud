@@ -94,9 +94,6 @@ In order to use the Velocloud Terraform provider you must first configure the pr
 
 ## Example of Provider Configuration
 
-
-```
-
 ```hcl
 provider "velocloud" {
   vco     = "vco.vcn.net"
