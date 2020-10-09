@@ -78,9 +78,9 @@ resource "velocloud_business_policies" "newtfbp" {
   rule {
     name            = "app1"
     dip             = "1.1.1.1"
-    transportgroup  = "PRIVATE_WIRED"
+    linksteering    = "PRIVATE_WIRED"
     serviceclass    = "transactional"
-    linksteering    = "auto"
+    networkservice  = "fixed"
     priority        = "high"
     rxbandwidthpct  = 50
     txbandwidthpct  = 75
@@ -92,9 +92,9 @@ resource "velocloud_business_policies" "newtfbp" {
     daddressgroup   = data.velocloud_address_group.gold.logicalid
     sportgroup      = data.velocloud_port_group.tcp22.id
     dportgroup      = data.velocloud_port_group.tcp22.id
-    transportgroup  = "ALL" // or PUBLIC_WIRED, PRIVATE_WIRED
+    linksteering    = "ALL" // or PUBLIC_WIRED, PRIVATE_WIRED
     serviceclass    = "realtime" // or bulk, transactional
-    linksteering    = "auto" // or fixed
+    networkservice  = "auto" // or fixed
     priority        = "low" // or high, normal
   }
 
@@ -103,9 +103,9 @@ resource "velocloud_business_policies" "newtfbp" {
     appid           = data.velocloud_application.bittorrent.id
     sportgroup      = velocloud_port_group.test.logicalid
     dportgroup      = velocloud_port_group.test.logicalid
-    transportgroup  = "PRIVATE_WIRED"
+    linksteering    = "PRIVATE_WIRED"
     serviceclass    = "transactional"
-    linksteering    = "auto"
+    networkservice  = "auto"
     priority        = "high"
     rxbandwidthpct  = 50
     txbandwidthpct  = 75

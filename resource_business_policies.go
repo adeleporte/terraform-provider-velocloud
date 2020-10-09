@@ -13,7 +13,7 @@ import (
 
 var QoSRuleClassValues = []string{"realtime", "transactional", "bulk"}
 var QoSServiceGroupValues = []string{"ALL", "PUBLIC_WIRED", "PRIVATE_WIRED"}
-var LinkSteeringValues = []string{"auto", "fixed"}
+var networkserviceValues = []string{"auto", "fixed"}
 
 func resourceBusinessPolicies() *schema.Resource {
 	return &schema.Resource{
@@ -92,11 +92,11 @@ func getQoSRulesSchema() *schema.Schema {
 					Default:  "-1",
 					Optional: true,
 				},
-				"linksteering": &schema.Schema{
+				"networkservice": &schema.Schema{
 					Type:         schema.TypeString,
 					Default:      "auto",
 					Optional:     true,
-					ValidateFunc: validation.StringInSlice(LinkSteeringValues, false),
+					ValidateFunc: validation.StringInSlice(networkserviceValues, false),
 				},
 				"serviceclass": &schema.Schema{
 					Type:         schema.TypeString,
@@ -104,7 +104,7 @@ func getQoSRulesSchema() *schema.Schema {
 					Optional:     true,
 					ValidateFunc: validation.StringInSlice(QoSRuleClassValues, false),
 				},
-				"transportgroup": &schema.Schema{
+				"linksteering": &schema.Schema{
 					Type:         schema.TypeString,
 					Default:      "ALL",
 					Optional:     true,
@@ -209,11 +209,11 @@ func resourceBusinessPoliciesCreate(ctx context.Context, d *schema.ResourceData,
 		rxScheduler["priority"] = r["priority"].(string)
 		txScheduler["priority"] = r["priority"].(string)
 
-		edge2CloudRouteAction["serviceGroup"] = r["transportgroup"].(string)
-		edge2DataCenterRouteAction["serviceGroup"] = r["transportgroup"].(string)
-		edge2EdgeRouteAction["serviceGroup"] = r["transportgroup"].(string)
+		edge2CloudRouteAction["serviceGroup"] = r["linksteering"].(string)
+		edge2DataCenterRouteAction["serviceGroup"] = r["linksteering"].(string)
+		edge2EdgeRouteAction["serviceGroup"] = r["linksteering"].(string)
 
-		if (r["linksteering"].(string)) == "auto" {
+		if (r["networkservice"].(string)) == "auto" {
 			edge2CloudRouteAction["routePolicy"] = "gateway"
 			edge2DataCenterRouteAction["routePolicy"] = "auto"
 			edge2EdgeRouteAction["routePolicy"] = "gateway"
@@ -223,7 +223,7 @@ func resourceBusinessPoliciesCreate(ctx context.Context, d *schema.ResourceData,
 			edge2EdgeRouteAction["routePolicy"] = "auto"
 		}
 
-		if (r["transportgroup"].(string)) == "ALL" {
+		if (r["linksteering"].(string)) == "ALL" {
 			edge2CloudRouteAction["linkPolicy"] = "auto"
 			edge2DataCenterRouteAction["linkPolicy"] = "auto"
 			edge2EdgeRouteAction["linkPolicy"] = "auto"
@@ -306,13 +306,13 @@ func resourceBusinessPoliciesRead(ctx context.Context, d *schema.ResourceData, m
 		rid["priority"] = rxScheduler["priority"].(string)
 		rid["priority"] = txScheduler["priority"].(string)
 
-		rid["transportgroup"] = edge2CloudRouteAction["serviceGroup"].(string)
-		rid["transportgroup"] = edge2DataCenterRouteAction["serviceGroup"].(string)
-		rid["transportgroup"] = edge2EdgeRouteAction["serviceGroup"].(string)
+		rid["linksteering"] = edge2CloudRouteAction["serviceGroup"].(string)
+		rid["linksteering"] = edge2DataCenterRouteAction["serviceGroup"].(string)
+		rid["linksteering"] = edge2EdgeRouteAction["serviceGroup"].(string)
 
-		rid["linksteering"] = edge2CloudRouteAction["routePolicy"].(string)
-		rid["linksteering"] = edge2DataCenterRouteAction["routePolicy"].(string)
-		rid["linksteering"] = edge2EdgeRouteAction["routePolicy"].(string)
+		rid["networkservice"] = edge2CloudRouteAction["routePolicy"].(string)
+		rid["networkservice"] = edge2DataCenterRouteAction["routePolicy"].(string)
+		rid["networkservice"] = edge2EdgeRouteAction["routePolicy"].(string)
 
 		rs[i] = rid
 	}

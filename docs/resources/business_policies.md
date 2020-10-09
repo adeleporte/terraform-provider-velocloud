@@ -16,9 +16,9 @@ resource "velocloud_business_policies" "newtfbp" {
   rule {
     name            = "app1"
     dip             = "1.1.1.1"
-    transportgroup  = "PRIVATE_WIRED"
+    linksteering    = "PRIVATE_WIRED"
     serviceclass    = "transactional"
-    linksteering    = "auto"
+    networkservice  = "fixed"
     priority        = "high"
     rxbandwidthpct  = 50
     txbandwidthpct  = 75
@@ -30,10 +30,10 @@ resource "velocloud_business_policies" "newtfbp" {
     daddressgroup   = data.velocloud_address_group.gold.logicalid
     sportgroup      = data.velocloud_port_group.tcp22.id
     dportgroup      = data.velocloud_port_group.tcp22.id
-    transportgroup  = "ALL"
-    serviceclass    = "realtime"
-    linksteering    = "auto"
-    priority        = "low"
+    linksteering    = "ALL" // or PUBLIC_WIRED, PRIVATE_WIRED
+    serviceclass    = "realtime" // or bulk, transactional
+    networkservice  = "auto" // or fixed
+    priority        = "low" // or high, normal
   }
 
     rule {
@@ -41,9 +41,9 @@ resource "velocloud_business_policies" "newtfbp" {
     appid           = data.velocloud_application.bittorrent.id
     sportgroup      = velocloud_port_group.test.logicalid
     dportgroup      = velocloud_port_group.test.logicalid
-    transportgroup  = "PRIVATE_WIRED"
+    linksteering    = "PRIVATE_WIRED"
     serviceclass    = "transactional"
-    linksteering    = "auto"
+    networkservice  = "auto"
     priority        = "high"
     rxbandwidthpct  = 50
     txbandwidthpct  = 75
@@ -71,7 +71,7 @@ resource "velocloud_business_policies" "newtfbp" {
 * `dportgroup` - (Optional) Destination Port Group of the rule. Use port group datasource or resource to get the logicalid
 * `priority` - (Optional) Priority of the rule. Valid values: `high`, `normal`, `high`.
 * `serviceclass` - (Optional) Service Class of the rule. Valid values: `realtime`, `transactional`, `bulk`.
-* `linksteering` - (Optional) Link Steering policy of the rule. Valid values: `auto`, `fixed`.
+* `networkservice` - (Optional) Network service policy of the rule. Valid values: `auto` (DMPO), `fixed` (Direct).
 * `transportgroup` - (Optional) Transport Group policy of the rule. Valid values: `ALL`, `PUBLIC_WIRED`, `PRIVATE_WIRED`, `PUBLIC_WIRELESS`.
 * `rxbandwidthpct` - (Optional) Inbound Rate limit of the rule. Valid values: `0-100`.
 * `txbandwidthpct` - (Optional) Outbound Rate limit of the rule. Valid values: `0-100`.
