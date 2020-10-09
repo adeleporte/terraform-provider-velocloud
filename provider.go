@@ -31,7 +31,7 @@ func Provider() *schema.Provider {
 			"velocloud_port_group":        resourcePortGroup(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"velocloud_profile":       dataSourceProfiles(),
+			"velocloud_profile":       dataSourceProfile(),
 			"velocloud_address_group": dataSourceAddressGroup(),
 			"velocloud_port_group":    dataSourcePortGroup(),
 			"velocloud_application":   dataSourceApplication(),

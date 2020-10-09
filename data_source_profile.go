@@ -10,9 +10,9 @@ import (
 	velo "github.com/adeleporte/terraform-provider-velocloud/velocloud"
 )
 
-func dataSourceProfiles() *schema.Resource {
+func dataSourceProfile() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataSourceProfilesRead,
+		ReadContext: dataSourceProfileRead,
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
@@ -22,7 +22,7 @@ func dataSourceProfiles() *schema.Resource {
 	}
 }
 
-func dataSourceProfilesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataSourceProfileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
