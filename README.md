@@ -52,18 +52,20 @@ more][provider-vc] on provider version control.
 
 # Installation (automatic)
 
+To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
 
 ```hcl
 terraform {
   required_providers {
     velocloud = {
-      versions = ["0.1"]
-      source = "vcn.cloud/edu/velocloud"
+      source = "adeleporte/velocloud"
+      version = "0.1.1"
     }
   }
 }
 
-provider velocloud {
+provider "velocloud" {
+  # Configuration options
 }
 ```
 
