@@ -59,13 +59,13 @@ terraform {
   required_providers {
     velocloud = {
       source = "adeleporte/velocloud"
-      version = "0.1.1"
     }
   }
 }
 
 provider "velocloud" {
-  # Configuration options
+  vco       = "https://vco.vcn.cloud/portal/rest"
+  token     = "my-token"
 }
 ```
 
@@ -116,7 +116,7 @@ In order to use the Velocloud Terraform provider you must first configure the pr
 ```hcl
 provider "velocloud" {
   vco       = "https://vco.vcn.cloud/portal/rest"
-  token     = "jhkjlhjkhjkhjkhjkhhjkhkjhkjhjkhkjhkjhjkhjkh"
+  token     = "my-token"
 }
 ```
 
@@ -124,5 +124,5 @@ provider "velocloud" {
 
 ```sh
 export VCO_URL      = "https://vco.vcn.cloud/portal/rest"
-export VCO_TOKEN    = "default"
+export VCO_TOKEN    = "my-token"
 ```
