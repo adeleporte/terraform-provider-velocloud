@@ -30,6 +30,7 @@ func Provider() *schema.Provider {
 			"velocloud_address_group":     resourceAddressGroup(),
 			"velocloud_port_group":        resourcePortGroup(),
 			"velocloud_edge":              resourceEdge(),
+			"velocloud_firewall_rules":    resourceFirewallRules(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"velocloud_profile":       dataSourceProfile(),

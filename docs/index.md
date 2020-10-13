@@ -115,7 +115,7 @@ In order to use the Velocloud Terraform provider you must first configure the pr
 
 ```hcl
 provider "velocloud" {
-  vco       = "vco.vcn.net"
+  vco       = "https://vco.vcn.cloud/portal/rest"
   token     = "jhkjlhjkhjkhjkhjkhhjkhkjhkjhjkhkjhkjhjkhjkh"
 }
 ```
@@ -123,6 +123,6 @@ provider "velocloud" {
 ## Example of Setting Environment Variables
 
 ```sh
-export VCO_URL      = "vco.vcn.cloud"
+export VCO_URL      = "https://vco.vcn.cloud/portal/rest"
 export VCO_TOKEN    = "default"
 ```

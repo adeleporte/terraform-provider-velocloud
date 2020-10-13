@@ -1,0 +1,369 @@
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	velo "github.com/adeleporte/terraform-provider-velocloud/velocloud"
+)
+
+func resourceFirewallRules() *schema.Resource {
+	return &schema.Resource{
+		CreateContext: resourceFirewallRulesCreate,
+		ReadContext:   resourceFirewallRulesRead,
+		UpdateContext: resourceFirewallRulesUpdate,
+		DeleteContext: resourceFirewallRulesDelete,
+		Schema: map[string]*schema.Schema{
+			"profile": &schema.Schema{
+				Type:     schema.TypeInt,
+				Required: true,
+			},
+			"enterpriseid": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
+			"segment": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
+			"firewall_status": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+			},
+			"firewall_stateful": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"firewall_logging": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"firewall_syslog": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+			"rule": &schema.Schema{
+				Type:        schema.TypeList,
+				Description: "Rules description",
+				Required:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"dip": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "any",
+							Optional: true,
+						},
+						"sip": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "any",
+							Optional: true,
+						},
+						"dsm": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "any",
+							Optional: true,
+						},
+						"ssm": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "any",
+							Optional: true,
+						},
+						"d_port_low": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"d_port_high": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"s_port_low": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"s_port_high": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"s_address_group": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "",
+							Optional: true,
+						},
+						"d_address_group": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "",
+							Optional: true,
+						},
+						"appid": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"classid": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"dscp": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"svlan": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"dvlan": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"hostname": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "",
+							Optional: true,
+						},
+						"os_version": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"proto": &schema.Schema{
+							Type:     schema.TypeInt,
+							Default:  -1,
+							Optional: true,
+						},
+						"smac": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "any",
+							Optional: true,
+						},
+						"d_rule_type": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "prefix",
+							Optional: true,
+						},
+						"s_rule_type": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "prefix",
+							Optional: true,
+						},
+						"action": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "allow",
+							Optional: true,
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	client := m.(*velo.Client)
+	profile_id := d.Get("profile").(int)
+	segment_id := d.Get("segment").(int)
+	rulesFromSchema := d.Get("rule").([]interface{})
+
+	fwmodule, err := velo.GetFirewallModule(client, profile_id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	raw := fwmodule.(map[string]interface{})
+	fw_module_id := int(raw["id"].(float64))
+
+	outbound_rules := make([]velo.FirewallOutboundRule, len(rulesFromSchema))
+	for i, ruleFromSchema := range rulesFromSchema {
+		rule := ruleFromSchema.(map[string]interface{})
+		outbound_rules[i] = velo.FirewallOutboundRule{
+			Name: rule["name"].(string),
+			Match: velo.FirewallRuleMatch{
+				DIP:       rule["dip"].(string),
+				DSM:       rule["dsm"].(string),
+				SIP:       rule["sip"].(string),
+				SSM:       rule["ssm"].(string),
+				DPortLow:  rule["d_port_low"].(int),
+				DPortHigh: rule["d_port_high"].(int),
+				SPortLow:  rule["s_port_low"].(int),
+				SPortHigh: rule["s_port_high"].(int),
+				AppID:     rule["appid"].(int),
+				ClassID:   rule["classid"].(int),
+				DRuleType: rule["d_rule_type"].(string),
+				SRuleType: rule["s_rule_type"].(string),
+				Dscp:      rule["dscp"].(int),
+				DVlan:     rule["dvlan"].(int),
+				SVlan:     rule["svlan"].(int),
+				Hostname:  rule["hostname"].(string),
+				OSVersion: rule["os_version"].(int),
+				Proto:     rule["proto"].(int),
+				SMac:      rule["smac"].(string),
+			},
+			Action: velo.FirewallOutboundAction{
+				AllowOrDeny: rule["action"].(string),
+			},
+		}
+	}
+
+	fw_data := velo.FirewallData{
+		FirewallEnabled:         d.Get("firewall_status").(bool),
+		StatefulFirewallEnabled: d.Get("firewall_stateful").(bool),
+		FirewallLoggingEnabled:  d.Get("firewall_logging").(bool),
+		SyslogForwarding:        d.Get("firewall_syslog").(bool),
+		Inbound:                 []velo.FirewallInboundRule{},
+		Segments: []velo.FirewallSegment{velo.FirewallSegment{
+			Outbound: outbound_rules,
+			Segment: velo.ModuleSegmentMetaData{
+				SegmentID: segment_id,
+			},
+		},
+		},
+	}
+
+	update := velo.ConfigurationFirewallModule{
+		Name: "firewall",
+		Data: fw_data,
+	}
+
+	firewall := velo.UpdateConfigurationFirewallModuleBody{
+		ID:     int(fw_module_id),
+		Update: update,
+	}
+
+	_, err = velo.UpdateFirewallModule(client, firewall)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	d.SetId(fmt.Sprint(fw_module_id))
+
+	resourceFirewallRulesRead(ctx, d, m)
+
+	return diags
+}
+
+func resourceFirewallRulesRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	client := m.(*velo.Client)
+	profile_id := d.Get("profile").(int)
+	segment_id := d.Get("segment").(int)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	fwmodule, err := velo.GetFirewallModules(client, profile_id, enterprise_id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	rulestoschema := []map[string]interface{}{}
+
+	for _, v := range fwmodule.Segments[segment_id].Outbound {
+		item := map[string]interface{}{}
+
+		item["name"] = v.Name
+		item["action"] = v.Action
+		item["dip"] = v.Match.DIP
+		item["dsm"] = v.Match.DSM
+		item["sip"] = v.Match.SIP
+		item["ssm"] = v.Match.SSM
+		item["d_port_low"] = v.Match.DPortLow
+		item["d_port_high"] = v.Match.DPortHigh
+		item["s_port_low"] = v.Match.SPortLow
+		item["d_port_high"] = v.Match.DPortHigh
+		item["appid"] = v.Match.AppID
+		item["classid"] = v.Match.ClassID
+		item["d_rule_type"] = v.Match.DRuleType
+		item["s_rule_type"] = v.Match.SRuleType
+		item["dscp"] = v.Match.Dscp
+		item["dvlan"] = v.Match.DVlan
+		item["svlan"] = v.Match.SVlan
+		item["hostname"] = v.Match.Hostname
+		item["os_version"] = v.Match.OSVersion
+		item["proto"] = v.Match.Proto
+		item["smac"] = v.Match.SMac
+
+		rulestoschema = append(rulestoschema, item)
+	}
+	d.Set("firewall_status", fwmodule.FirewallEnabled)
+	d.Set("firewall_stateful", fwmodule.StatefulFirewallEnabled)
+	d.Set("firewall_logging", fwmodule.FirewallLoggingEnabled)
+	d.Set("firewall_syslog", fwmodule.SyslogForwarding)
+	d.Set("rule", rulestoschema)
+
+	return diags
+}
+
+func resourceFirewallRulesUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	resourceFirewallRulesCreate(ctx, d, m)
+
+	return diags
+}
+
+func resourceFirewallRulesDelete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	var diags diag.Diagnostics
+
+	client := m.(*velo.Client)
+	profile_id := d.Get("profile").(int)
+	segment_id := d.Get("segment").(int)
+
+	fwmodule, err := velo.GetFirewallModule(client, profile_id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	raw := fwmodule.(map[string]interface{})
+	fw_module_id := int(raw["id"].(float64))
+
+	outbound_rules := []velo.FirewallOutboundRule{}
+
+	fw_data := velo.FirewallData{
+		FirewallEnabled: true,
+		Inbound:         []velo.FirewallInboundRule{},
+		Segments: []velo.FirewallSegment{velo.FirewallSegment{
+			Outbound: outbound_rules,
+			Segment: velo.ModuleSegmentMetaData{
+				SegmentID: segment_id,
+			},
+		},
+		},
+	}
+
+	update := velo.ConfigurationFirewallModule{
+		Name: "firewall",
+		Data: fw_data,
+	}
+
+	firewall := velo.UpdateConfigurationFirewallModuleBody{
+		ID:     int(fw_module_id),
+		Update: update,
+	}
+
+	_, err = velo.UpdateFirewallModule(client, firewall)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+
+	return diags
+}

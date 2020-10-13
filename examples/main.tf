@@ -129,6 +129,7 @@ output "edge1" {
 
 */
 
+/*
 data "velocloud_edge" "edge2" {
     name = "Antoine-HomeOffice"
 }
@@ -162,4 +163,31 @@ resource "velocloud_edge" "edge1" {
   }
 
   
+}
+
+*/
+
+resource "velocloud_firewall_rules" "newtffw" {
+
+  profile = data.velocloud_profile.newtf.id
+
+  firewall_status = true
+  firewall_logging = true
+  firewall_stateful = true
+  firewall_syslog = true
+
+  rule {
+    name            = "rule1"
+    dip             = "1.1.1.1"
+    action          = "allow"
+  }
+
+  rule {
+    name            = "rule2"
+    sip             = "4.4.4.4"
+    dip             = "3.3.3.3"
+    action          = "deny"
+  }
+
+
 }

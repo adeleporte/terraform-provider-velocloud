@@ -26,6 +26,10 @@ func resourceBusinessPolicies() *schema.Resource {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
+			"enterpriseid": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+			},
 			"segment": &schema.Schema{
 				Type:     schema.TypeInt,
 				Optional: true,
