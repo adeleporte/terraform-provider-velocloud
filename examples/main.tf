@@ -4,6 +4,9 @@ terraform {
       versions = ["0.1"]
       source = "vcn.cloud/edu/velocloud"
     }
+    aws = {
+      source  = "hashicorp/aws"
+    }
   }
 }
 
@@ -127,13 +130,12 @@ output "edge1" {
     value = data.velocloud_edge.edge1
 }
 
-*/
 
-/*
 data "velocloud_edge" "edge2" {
     name = "Antoine-HomeOffice"
 }
 
+*/
 
 resource "velocloud_edge" "edge1" {
 
@@ -161,12 +163,44 @@ resource "velocloud_edge" "edge1" {
 
     shippingsameaslocation      = true
   }
-
   
 }
 
+output "edge1" {
+    value = velocloud_edge.edge1
+}
+
+/*
+resource "velocloud_device_settings" "dv1" {
+  profile         = velocloud_edge.edge1.edgeprofileid
+
+  vlan {
+    cidr_ip         = "1.1.1.1"
+    cidr_prefix     = 24
+  }
+
+  routed_interface {
+    name            = "GE3"
+    cidr_ip         = "3.3.3.3"
+    cidr_prefix     = 24
+    gateway         = "3.3.3.254"
+    netmask         = "255.255.255.0"
+    type            = "STATIC"
+  }
+
+  routed_interface {
+    name            = "GE4"
+    cidr_ip         = "4.4.4.4"
+    cidr_prefix     = 24
+    gateway         = "4.4.4.254"
+    netmask         = "255.255.255.0"
+    type            = "STATIC"
+  }
+
+}
 */
 
+/*
 resource "velocloud_firewall_rules" "newtffw" {
 
   profile = data.velocloud_profile.newtf.id
@@ -191,3 +225,4 @@ resource "velocloud_firewall_rules" "newtffw" {
 
 
 }
+*/

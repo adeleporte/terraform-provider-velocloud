@@ -1,0 +1,73 @@
+
+# Configure the AWS Provider
+provider "aws" {
+  region = "us-west-1"
+}
+
+data "aws_ami" "velocloud" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["VeloCloud VCE 3.3.1-71-R331-20190925-GA-31ebe508-57ab-4a11-ad63-89bffdedead5-ami-0806d8f5d5558de00.4"]
+  }
+
+  owners = ["aws-marketplace"]
+
+}
+
+/*
+data "template_cloudinit_config" "config" {
+  gzip          = false
+  base64_encode = false
+  
+  #first part of local config file
+  part {
+    content_type = "text/x-shellscript"
+    content      = <<-EOF
+		#cloud-config
+		velocloud:
+		  vce:
+		    vco: vco22-fra1.velocloud.net
+            activation_code: "${velocloud_edge.edge1.activationkey}"
+		    vco_ignore_cert_errors: true
+	EOF
+  }
+  
+}
+*/
+data template_file "userdata" {
+  template = file("${path.module}/cloud-init.yaml")
+
+  vars = {
+    activationcode      = velocloud_edge.edge1.activationkey
+  }
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.velocloud.id
+  instance_type = "c5.large"
+
+  key_name = "aws-california"
+
+  tags = {
+    Name = "Velocloud"
+  }
+
+  network_interface {
+      device_index = 0
+      network_interface_id = "eni-09c2735c768c43583"
+  }
+
+  network_interface {
+      device_index = 1
+      network_interface_id = "eni-030c6ec61b0aa4b7b"
+  }
+
+  network_interface {
+      device_index = 2
+      network_interface_id = "eni-0962c0b9a50c1856b"
+  }
+
+  user_data = data.template_file.userdata.rendered
+}

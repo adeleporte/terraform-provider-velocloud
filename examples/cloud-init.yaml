@@ -1,0 +1,6 @@
+#cloud-config
+velocloud:
+  vce:
+    vco: vco22-fra1.velocloud.net
+    activation_code: ${activationcode}
+    vco_ignore_cert_errors: true

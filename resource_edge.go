@@ -211,6 +211,10 @@ func resourceEdge() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
+			"edgeprofileid": &schema.Schema{
+				Type:     schema.TypeInt,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -311,10 +315,11 @@ func resourceEdgeRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
-	id, _ := strconv.Atoi(d.Id())
+	edge_id, _ := strconv.Atoi(d.Id())
+	enterprise_id := d.Get("enterpriseid").(int)
 
 	edge := velo.Enterprise_get_edge{
-		ID: id,
+		ID: edge_id,
 	}
 
 	resp, err := velo.ReadEdge(client, edge)
@@ -328,6 +333,13 @@ func resourceEdgeRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	d.Set("hastate", resp.HaState)
 	d.Set("islive", resp.IsLive)
 	d.Set("servicestate", resp.ServiceState)
+
+	// Read Edge Specific Configuration Profile
+	edge_profile_id, err := velo.GetEdgeSpecificProfile(client, edge_id, enterprise_id)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	d.Set("edgeprofileid", edge_profile_id)
 
 	return diags
 }

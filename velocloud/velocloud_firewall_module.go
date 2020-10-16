@@ -227,7 +227,7 @@ func UpdateFirewallModule(c *Client, body UpdateConfigurationFirewallModuleBody)
 	return resp, nil
 }
 
-// GetFirewallModule ...
+// GetFirewallModules ...
 func GetFirewallModules(c *Client, configurationId int, enterpriseId int) (FirewallData, error) {
 
 	resp := []GetConfigurationModulesBody_result{}

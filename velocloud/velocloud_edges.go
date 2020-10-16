@@ -107,6 +107,17 @@ type Edge_delete_edge_result struct {
 	Rows  int    `json:"rows"`
 }
 
+type Edge_get_edge_configuration_stack struct {
+	EdgeID       int `json:"edgeId"`
+	EnterpriseID int `json:"enterpriseId,omitempty"`
+}
+
+type Edge_get_edge_configuration_stack_result struct {
+	ID      int           `json:"id"`
+	Name    string        `json:"name"`
+	Modules []interface{} `json:"modules"`
+}
+
 // InsertEdge ...
 func InsertEdge(c *Client, body Enterprise_provision_edge) (Enterprise_provision_edge_result, error) {
 
@@ -267,4 +278,49 @@ func DeleteEdge(c *Client, body Edge_delete_edge) (Edge_delete_edge_result, erro
 	}
 
 	return resp, nil
+}
+
+// GetEdges ...
+func GetEdgeSpecificProfile(c *Client, edge_id int, enterprise_id int) (int, error) {
+
+	resp := []Edge_get_edge_configuration_stack_result{}
+
+	body := Edge_get_edge_configuration_stack{
+		EdgeID:       edge_id,
+		EnterpriseID: enterprise_id,
+	}
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/edge/getEdgeConfigurationStack", c.HostURL), buf)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	// Send the request
+	res, err := c.doRequest(req)
+	if err != nil {
+		fmt.Println(err.Error())
+		//return ConfigurationResults{}
+		return -1, err
+	}
+
+	// Unmarschal
+	err = json.Unmarshal(res, &resp)
+	if err != nil {
+		fmt.Println("Error with unmarshal")
+		fmt.Println(err.Error())
+		return -1, err
+	}
+
+	for _, v := range resp {
+		if v.Name == "Edge Specific Profile" {
+			return v.ID, nil
+		}
+	}
+
+	return -1, errors.New("cant find edge specific profile")
+
 }
