@@ -199,25 +199,29 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 		outbound_rules[i] = velo.FirewallOutboundRule{
 			Name: rule["name"].(string),
 			Match: velo.FirewallRuleMatch{
-				DIP:       rule["dip"].(string),
-				DSM:       rule["dsm"].(string),
-				SIP:       rule["sip"].(string),
-				SSM:       rule["ssm"].(string),
-				DPortLow:  rule["d_port_low"].(int),
-				DPortHigh: rule["d_port_high"].(int),
-				SPortLow:  rule["s_port_low"].(int),
-				SPortHigh: rule["s_port_high"].(int),
-				AppID:     rule["appid"].(int),
-				ClassID:   rule["classid"].(int),
-				DRuleType: rule["d_rule_type"].(string),
-				SRuleType: rule["s_rule_type"].(string),
-				Dscp:      rule["dscp"].(int),
-				DVlan:     rule["dvlan"].(int),
-				SVlan:     rule["svlan"].(int),
-				Hostname:  rule["hostname"].(string),
-				OSVersion: rule["os_version"].(int),
-				Proto:     rule["proto"].(int),
-				SMac:      rule["smac"].(string),
+				DIP:           rule["dip"].(string),
+				DSM:           rule["dsm"].(string),
+				SIP:           rule["sip"].(string),
+				SSM:           rule["ssm"].(string),
+				SAddressGroup: rule["s_address_group"].(string),
+				DAddressGroup: rule["d_address_group"].(string),
+				SPortGroup:    rule["s_port_group"].(string),
+				DPortGroup:    rule["d_port_group"].(string),
+				DPortLow:      rule["d_port_low"].(int),
+				DPortHigh:     rule["d_port_high"].(int),
+				SPortLow:      rule["s_port_low"].(int),
+				SPortHigh:     rule["s_port_high"].(int),
+				AppID:         rule["appid"].(int),
+				ClassID:       rule["classid"].(int),
+				DRuleType:     rule["d_rule_type"].(string),
+				SRuleType:     rule["s_rule_type"].(string),
+				Dscp:          rule["dscp"].(int),
+				DVlan:         rule["dvlan"].(int),
+				SVlan:         rule["svlan"].(int),
+				Hostname:      rule["hostname"].(string),
+				OSVersion:     rule["os_version"].(int),
+				Proto:         rule["proto"].(int),
+				SMac:          rule["smac"].(string),
 			},
 			Action: velo.FirewallOutboundAction{
 				AllowOrDeny: rule["action"].(string),
@@ -286,6 +290,10 @@ func resourceFirewallRulesRead(ctx context.Context, d *schema.ResourceData, m in
 		item["dsm"] = v.Match.DSM
 		item["sip"] = v.Match.SIP
 		item["ssm"] = v.Match.SSM
+		item["s_address_group"] = v.Match.SAddressGroup
+		item["d_address_group"] = v.Match.DAddressGroup
+		item["s_port_group"] = v.Match.SPortGroup
+		item["d_port_group"] = v.Match.DPortGroup
 		item["d_port_low"] = v.Match.DPortLow
 		item["d_port_high"] = v.Match.DPortHigh
 		item["s_port_low"] = v.Match.SPortLow

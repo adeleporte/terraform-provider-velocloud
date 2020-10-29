@@ -13,10 +13,14 @@ terraform {
 provider velocloud {
 }
 
+/*
 data "velocloud_profile" "newtf" {
     name = "newtf"
 }
-
+*/
+data "velocloud_profile" "tf2" {
+    name = "tf2"
+}
 /*
 data "velocloud_address_group" "gold" {
     name = "Gold"
@@ -137,6 +141,7 @@ data "velocloud_edge" "edge2" {
 
 */
 
+/*
 resource "velocloud_edge" "edge1" {
 
   configurationid               = data.velocloud_profile.newtf.id
@@ -169,15 +174,17 @@ resource "velocloud_edge" "edge1" {
 output "edge1" {
     value = velocloud_edge.edge1
 }
+*/
 
-/*
 resource "velocloud_device_settings" "dv1" {
-  profile         = velocloud_edge.edge1.edgeprofileid
+  profile         = data.velocloud_profile.tf2.id
+
 
   vlan {
     cidr_ip         = "1.1.1.1"
     cidr_prefix     = 24
   }
+
 
   routed_interface {
     name            = "GE3"
@@ -198,7 +205,7 @@ resource "velocloud_device_settings" "dv1" {
   }
 
 }
-*/
+
 
 /*
 resource "velocloud_firewall_rules" "newtffw" {
