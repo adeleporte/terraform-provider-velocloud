@@ -110,6 +110,16 @@ func resourceFirewallRules() *schema.Resource {
 							Default:  "",
 							Optional: true,
 						},
+						"s_port_group": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "",
+							Optional: true,
+						},
+						"d_port_group": &schema.Schema{
+							Type:     schema.TypeString,
+							Default:  "",
+							Optional: true,
+						},
 						"appid": &schema.Schema{
 							Type:     schema.TypeInt,
 							Default:  -1,

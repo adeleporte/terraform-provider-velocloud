@@ -46,7 +46,7 @@ resource "velocloud_firewall_rules" "newtffw" {
 * `sport_low` - (Optional) Source Low Port of the rule.
 * `sport_high` - (Optional) Source High Port of the rule.
 * `s_address_group` - (Optional) Source Address Group of the rule. Use address group datasource or resource to get the logicalid
-* `sportgroup` - (Optional) Source Port Group of the rule. Use port group datasource or resource to get the logicalid
+* `s_port_group` - (Optional) Source Port Group of the rule. Use port group datasource or resource to get the logicalid
 * `svlan` - (Optional) Source VLAN to be matched.
 * `smac` - (Optional) Source MAC address to be matched.
 * `s_rule_type` - (Optional) Type of source object to be matched.
@@ -59,7 +59,7 @@ resource "velocloud_firewall_rules" "newtffw" {
 * `appid` - (Optional) Application to be matched. Use application datasource to get the ID of a specifig application
 * `proto` - (Optional) Destination Protocol of the rule.
 * `d_address_group` - (Optional) Destination Address Group of the rule. Use address group datasource or resource to get the logicalid
-* `dportgroup` - (Optional) Destination Port Group of the rule. Use port group datasource or resource to get the logicalid
+* `d_port_group` - (Optional) Destination Port Group of the rule. Use port group datasource or resource to get the logicalid
 * `classid` - (Optional) Class to be matched.
 * `dscp` - (Optional) Dscp to be matched.
 * `dvlan` - (Optional) Destnation VLAN to be matched.
