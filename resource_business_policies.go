@@ -56,6 +56,11 @@ func getQoSRulesSchema() *schema.Schema {
 					Default:  -1,
 					Optional: true,
 				},
+				"hostname": &schema.Schema{
+					Type:     schema.TypeString,
+					Default:  "",
+					Optional: true,
+				},
 				"dip": &schema.Schema{
 					Type:     schema.TypeString,
 					Default:  "any",
@@ -183,6 +188,7 @@ func resourceBusinessPoliciesCreate(ctx context.Context, d *schema.ResourceData,
 
 		// Match
 		match["appid"] = r["appid"].(float64)
+		match["hostname"] = r["hostname"].(string)
 		match["dip"] = r["dip"].(string)
 		match["dport_low"] = r["dport_low"].(float64)
 		match["dport_high"] = r["dport_low"].(float64)
@@ -282,6 +288,7 @@ func resourceBusinessPoliciesRead(ctx context.Context, d *schema.ResourceData, m
 		rid["name"] = r["name"].(string)
 
 		rid["appid"] = match["appid"].(float64)
+		rid["hostname"] = match["hostname"].(string)
 		rid["dip"] = match["dip"].(string)
 		rid["dsm"] = match["dsm"].(string)
 		rid["dport_low"] = match["dport_low"].(float64)

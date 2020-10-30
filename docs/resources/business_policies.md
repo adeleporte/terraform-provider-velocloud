@@ -56,6 +56,7 @@ resource "velocloud_business_policies" "newtfbp" {
 ### Rule reference
 * `name` - (Required) Name of the rule.
 * `appid` - (Optional) Application to be matched. Use application datasource to get the ID of a specifig application
+* `hostname` - (Optional) Hostname of the rule.
 * `dip` - (Optional) Destination IP of the rule.
 * `dsm` - (Optional) Destination Mask of the rule.
 * `dport_low` - (Optional) Destination Low Port of the rule.
