@@ -73,6 +73,7 @@ func resourceDeviceSettings() *schema.Resource {
 						"gateway": &schema.Schema{
 							Type:     schema.TypeString,
 							Optional: true,
+							Default:  "",
 						},
 						"netmask": &schema.Schema{
 							Type:     schema.TypeString,
@@ -84,6 +85,16 @@ func resourceDeviceSettings() *schema.Resource {
 							Default:  "DHCP",
 						},
 						"override": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"nat_direct": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"wan_overlay": &schema.Schema{
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -175,11 +186,22 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 			item := w.(map[string]interface{})
 			if intf["name"] == item["name"] {
 				intf["override"] = item["override"]
+				intf["natDirect"] = item["nat_direct"]
 				addressing["cidrIp"] = item["cidr_ip"]
 				addressing["cidrPrefix"] = item["cidr_prefix"]
 				addressing["gateway"] = item["gateway"]
 				addressing["netmask"] = item["netmask"]
 				addressing["type"] = item["type"]
+				if item["gateway"] == "" {
+					addressing["gateway"] = nil
+				} else {
+					addressing["gateway"] = item["gateway"]
+				}
+				if item["wan_overlay"] == true {
+					addressing["wanOverlay"] = "AUTO_DISCOVERED"
+				} else {
+					addressing["wanOverlay"] = "DISABLED"
+				}
 			}
 		}
 
@@ -281,11 +303,13 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 			item := w.(map[string]interface{})
 			if intf["name"] == item["name"] {
 				intf["override"] = false
+				intf["natDirect"] = true
 				addressing["cidrIp"] = nil
 				addressing["cidrPrefix"] = nil
 				addressing["gateway"] = nil
 				addressing["netmask"] = nil
 				addressing["type"] = "DHCP"
+				addressing["wanOverlay"] = "AUTO_DISCOVERED"
 			}
 		}
 
