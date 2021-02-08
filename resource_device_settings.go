@@ -72,7 +72,7 @@ func resourceDeviceSettings() *schema.Resource {
 						},
 						"gateway": &schema.Schema{
 							Type:     schema.TypeString,
-							Required: true,
+							Optional: true,
 						},
 						"netmask": &schema.Schema{
 							Type:     schema.TypeString,
@@ -84,6 +84,46 @@ func resourceDeviceSettings() *schema.Resource {
 							Default:  "DHCP",
 						},
 						"override": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+					},
+				},
+			},
+			"static_route": &schema.Schema{
+				Type:        schema.TypeList,
+				Description: "Static route description",
+				Optional:    true,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"subnet_cidr_ip": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"subnet_cidr_prefix": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"next_hop": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"interface": &schema.Schema{
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"cost": &schema.Schema{
+							Type:     schema.TypeInt,
+							Optional: true,
+							Default:  0,
+						},
+						"preferred": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"advertise": &schema.Schema{
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -108,6 +148,7 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	cidr_prefix := vlan["cidr_prefix"].(int)
 
 	routed_interfaces := d.Get("routed_interface").([]interface{})
+	static_routes := d.Get("static_route").([]interface{})
 
 	dmodule, err := velo.GetDeviceSettingsModule(client, edgeprofile_id)
 	if err != nil {
@@ -121,6 +162,7 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	networks := lan["networks"].([]interface{})
 	network0 := networks[0].(map[string]interface{})
 	interfaces := data["routedInterfaces"].([]interface{})
+	// routes := data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"].([]interface{})
 
 	// Update the module
 	network0["cidrIp"] = cidr_ip
@@ -142,6 +184,37 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 		}
 
 	}
+	type Route struct {
+		Destination    string `json:"destination"`
+		Gateway        string `json:"gateway"`
+		WanInterface   string `json:"wanInterface"`
+		CidrPrefix     string `json:"cidrPrefix"`
+		Cost           int    `json:"cost"`
+		SubInterfaceID int    `json:"subinterfaceId"`
+		Preferred      bool   `json:"preferred"`
+		Advertise      bool   `json:"advertise"`
+	}
+
+	var routes []interface{}
+
+	for _, w := range static_routes {
+		item := w.(map[string]interface{})
+		route := Route{
+			Destination:    item["subnet_cidr_ip"].(string),
+			CidrPrefix:     item["subnet_cidr_prefix"].(string),
+			Gateway:        item["next_hop"].(string),
+			WanInterface:   item["interface"].(string),
+			Cost:           item["cost"].(int),
+			Preferred:      item["preferred"].(bool),
+			Advertise:      item["advertise"].(bool),
+			SubInterfaceID: -1,
+		}
+		routes = append(routes, route)
+	}
+
+	data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"] = routes
+
+	log.Println(data)
 
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(data)
