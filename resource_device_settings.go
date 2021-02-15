@@ -48,6 +48,21 @@ func resourceDeviceSettings() *schema.Resource {
 							Optional: true,
 							Default:  24,
 						},
+						"advertise": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
+						"override": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  false,
+						},
+						"dhcp_enabled": &schema.Schema{
+							Type:     schema.TypeBool,
+							Optional: true,
+							Default:  true,
+						},
 					},
 				},
 			},
@@ -157,6 +172,9 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	vlan := (d.Get("vlan").([]interface{}))[0].(map[string]interface{})
 	cidr_ip := vlan["cidr_ip"].(string)
 	cidr_prefix := vlan["cidr_prefix"].(int)
+	override := vlan["override"].(bool)
+	advertise := vlan["advertise"].(bool)
+	dhcp_enabled := vlan["dhcp_enabled"].(bool)
 
 	routed_interfaces := d.Get("routed_interface").([]interface{})
 	static_routes := d.Get("static_route").([]interface{})
@@ -172,12 +190,23 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	lan := data["lan"].(map[string]interface{})
 	networks := lan["networks"].([]interface{})
 	network0 := networks[0].(map[string]interface{})
+	dhcp := network0["dhcp"].(map[string]interface{})
 	interfaces := data["routedInterfaces"].([]interface{})
 	// routes := data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"].([]interface{})
 
 	// Update the module
 	network0["cidrIp"] = cidr_ip
 	network0["cidrPrefix"] = cidr_prefix
+	network0["advertise"] = advertise
+	network0["override"] = override
+
+	if dhcp_enabled == false {
+		dhcp["enabled"] = false
+		dhcp["override"] = true
+	} else {
+		dhcp["enabled"] = true
+		dhcp["override"] = false
+	}
 
 	for _, v := range interfaces {
 		intf := v.(map[string]interface{})
@@ -255,6 +284,32 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 
 func resourceDeviceSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
+
+	// client := m.(*velo.Client)
+
+	// // Get info from the schema
+	// edgeprofile_id, _ := d.Get("profile").(int)
+	// //enterprise_id := d.Get("enterpriseid").(int)
+	// vlan := (d.Get("vlan").([]interface{}))[0].(map[string]interface{})
+	// cidr_ip := vlan["cidr_ip"].(string)
+	// cidr_prefix := vlan["cidr_prefix"].(int)
+
+	// routed_interfaces := d.Get("routed_interface").([]interface{})
+	// static_routes := d.Get("static_route").([]interface{})
+
+	// dmodule, err := velo.GetDeviceSettingsModule(client, edgeprofile_id)
+	// if err != nil {
+	// 	return diag.FromErr(err)
+	// }
+
+	// // Get info from module
+	// id := int(dmodule["id"].(float64))
+	// data := dmodule["data"].(map[string]interface{})
+	// lan := data["lan"].(map[string]interface{})
+	// networks := lan["networks"].([]interface{})
+	// network0 := networks[0].(map[string]interface{})
+	// interfaces := data["routedInterfaces"].([]interface{})
+	// routes := data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"].([]interface{})
 
 	return diags
 
