@@ -192,7 +192,6 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	network0 := networks[0].(map[string]interface{})
 	dhcp := network0["dhcp"].(map[string]interface{})
 	interfaces := data["routedInterfaces"].([]interface{})
-	// routes := data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"].([]interface{})
 
 	// Update the module
 	network0["cidrIp"] = cidr_ip
@@ -284,32 +283,6 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 
 func resourceDeviceSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
-
-	// client := m.(*velo.Client)
-
-	// // Get info from the schema
-	// edgeprofile_id, _ := d.Get("profile").(int)
-	// //enterprise_id := d.Get("enterpriseid").(int)
-	// vlan := (d.Get("vlan").([]interface{}))[0].(map[string]interface{})
-	// cidr_ip := vlan["cidr_ip"].(string)
-	// cidr_prefix := vlan["cidr_prefix"].(int)
-
-	// routed_interfaces := d.Get("routed_interface").([]interface{})
-	// static_routes := d.Get("static_route").([]interface{})
-
-	// dmodule, err := velo.GetDeviceSettingsModule(client, edgeprofile_id)
-	// if err != nil {
-	// 	return diag.FromErr(err)
-	// }
-
-	// // Get info from module
-	// id := int(dmodule["id"].(float64))
-	// data := dmodule["data"].(map[string]interface{})
-	// lan := data["lan"].(map[string]interface{})
-	// networks := lan["networks"].([]interface{})
-	// network0 := networks[0].(map[string]interface{})
-	// interfaces := data["routedInterfaces"].([]interface{})
-	// routes := data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"].([]interface{})
 
 	return diags
 
