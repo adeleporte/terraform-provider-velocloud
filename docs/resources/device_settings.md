@@ -59,6 +59,7 @@ resource "velocloud_device_settings" "dv1" {
 - `profile` - (Required) ID of the edge specific profile.
 - `vlan` - (Optional) Configuration of VLAN.
 - `routed_interface` - (Optional) List of configuration for Routed Interfaces.
+- `static_route` - (Optional) List of configuration for static routes.
 
 ### vlan reference
 
