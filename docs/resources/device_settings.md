@@ -73,7 +73,7 @@ resource "velocloud_device_settings" "dv1" {
 - `name` - (Required) Name of the routed interface.
 - `cidr_ip` - (Required) CIDR of the interface.
 - `cidr_prefix` - (Optional) Prefix Length. Default is `24`
-- `gateway` - (optional) Gateway of the interface.
+- `gateway` - (Optional) Gateway of the interface.
 - `netmask` - (Required) Netmask of the interface.
 - `type` - (Optional) Type of addressing. Valid values are `STATIC` and `DHCP`.
 - `override` - (Optional) Override status of the interface. Default is `true`
