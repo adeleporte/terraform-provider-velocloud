@@ -4,13 +4,29 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"net"
 	"strconv"
 
 	velo "github.com/adeleporte/terraform-provider-velocloud/velocloud"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
+
+func getCidrNetmask(cidrIP string, cidrPrefix int) string {
+	_, ipv4Net, err := net.ParseCIDR(fmt.Sprintf("%s/%d", cidrIP, cidrPrefix))
+	if err != nil {
+		log.Fatal(err)
+	}
+	mask := ipv4Net.Mask
+
+	if len(mask) != 4 {
+		panic("ipv4Mask: length must be 4 bytes")
+	}
+
+	return fmt.Sprintf("%d.%d.%d.%d", mask[0], mask[1], mask[2], mask[3])
+}
 
 func resourceDeviceSettings() *schema.Resource {
 	return &schema.Resource{
@@ -198,6 +214,7 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 	network0["cidrPrefix"] = cidr_prefix
 	network0["advertise"] = advertise
 	network0["override"] = override
+	network0["netmask"] = getCidrNetmask(cidr_ip, cidr_prefix)
 
 	if dhcp_enabled == false {
 		dhcp["enabled"] = false
@@ -264,8 +281,6 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 
 	data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"] = routes
 
-	log.Println(data)
-
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(data)
 
@@ -314,15 +329,20 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 	// Get info from module
 	id := int(dmodule["id"].(float64))
 	data := dmodule["data"].(map[string]interface{})
-	//lan := data["lan"].(map[string]interface{})
-	//networks := lan["networks"].([]interface{})
-	//network0 := networks[0].(map[string]interface{})
+	lan := data["lan"].(map[string]interface{})
+	networks := lan["networks"].([]interface{})
+	network0 := networks[0].(map[string]interface{})
 	interfaces := data["routedInterfaces"].([]interface{})
+	dhcp := network0["dhcp"].(map[string]interface{})
 
 	// Update the module
-	//network0["cidrIp"] = nil
-	//network0["cidrPrefix"] = nil
-	// Need to find a way to reset vlan cidr and prefix
+	network0["cidrIp"] = nil
+	network0["cidrPrefix"] = nil
+	network0["advertise"] = true
+	network0["override"] = false
+
+	dhcp["enabled"] = true
+	dhcp["override"] = false
 
 	for _, v := range interfaces {
 		intf := v.(map[string]interface{})
@@ -342,6 +362,8 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 		}
 
 	}
+
+	data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"] = []int{}
 
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(data)
