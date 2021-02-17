@@ -13,7 +13,7 @@ resource "velocloud_device_settings" "dv1" {
     cidr_prefix     = 24
     advertise       = true
     override        = false
-    dhcp_enabled    = true
+    dhcp_enabled    = false
   }
 
   routed_interface {
@@ -67,7 +67,7 @@ resource "velocloud_device_settings" "dv1" {
 - `cidr_prefix` - (Optional) Prefix Length. Default is `24`
 - `advertise` - (Optional) Whether to advertise the VLAN. Default is `true`
 - `override` - (Optional) Whether to use Edge-specific override for VLAN. Default is `false`
-- `dhcp_disabled` - (Optional) Whether DHCP is enabled on VLAN. Default is `true`
+- `dhcp_enabled` - (Optional) Whether DHCP is enabled on VLAN. Default is `true`
 
 ### routed_interface reference
 
