@@ -65,17 +65,17 @@ func resourceDeviceSettings() *schema.Resource {
 							Optional: true,
 							Default:  24,
 						},
-						"advertise": &schema.Schema{
+						"advertise": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
 						},
-						"override": &schema.Schema{
+						"override": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  false,
 						},
-						"dhcp_enabled": &schema.Schema{
+						"dhcp_enabled": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -121,12 +121,12 @@ func resourceDeviceSettings() *schema.Resource {
 							Optional: true,
 							Default:  true,
 						},
-						"nat_direct": &schema.Schema{
+						"nat_direct": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
 						},
-						"wan_overlay": &schema.Schema{
+						"wan_overlay": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -134,39 +134,39 @@ func resourceDeviceSettings() *schema.Resource {
 					},
 				},
 			},
-			"static_route": &schema.Schema{
+			"static_route": {
 				Type:        schema.TypeList,
 				Description: "Static route description",
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"subnet_cidr_ip": &schema.Schema{
+						"subnet_cidr_ip": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"subnet_cidr_prefix": &schema.Schema{
+						"subnet_cidr_prefix": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"next_hop": &schema.Schema{
+						"next_hop": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"interface": &schema.Schema{
+						"interface": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"cost": &schema.Schema{
+						"cost": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Default:  0,
 						},
-						"preferred": &schema.Schema{
+						"preferred": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
 						},
-						"advertise": &schema.Schema{
+						"advertise": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
