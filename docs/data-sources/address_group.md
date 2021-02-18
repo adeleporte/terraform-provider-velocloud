@@ -28,6 +28,7 @@ output "my_group" {
 ## Argument Reference
 
 * `name` - (Required) Name of the address group.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ## Attribute Reference
 

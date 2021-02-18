@@ -18,6 +18,7 @@ output "my_application" {
 ## Argument Reference
 
 * `name` - (Required) Name of the profile.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ## Attribute Reference
 

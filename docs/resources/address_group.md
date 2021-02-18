@@ -41,6 +41,7 @@ output "my_group" {
 * `name` - (Required) Name of the address group.
 * `description` - (Optional) Description of the address group.
 * `range` - (Optional) List of address group ranges.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ### Range argument Reference
 * `ip` - (Required) IP or Subnet to match (ie 1.1.1.1 or 1.1.0.0).

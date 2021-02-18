@@ -52,6 +52,7 @@ resource "velocloud_business_policies" "newtfbp" {
 
 * `profile` - (Required) ID of the profile.
 * `rule` - (Optional) List of business policies.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ### Rule reference
 * `name` - (Required) Name of the rule.

@@ -50,7 +50,6 @@ type Enterprise_update_address_group struct {
 }
 
 type Enterprise_update_address_group_result struct {
-	ID    int    `json:"id"`
 	Rows  int    `json:"rows"`
 	Error string `json:"error"`
 }

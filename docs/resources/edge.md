@@ -43,6 +43,7 @@ output "my_group" {
 * `name` - (Required) Name of the edge.
 * `configurationid` - (Required) Profile to associate the edge with.
 * `modelnumber` - (Required) Model of the edge. Valid values are: `edge500`, `edge5X0`, `edge510`, `edge510lte`, `edge6X0`, `edge840`, `edge1000`, `edge1000qat`,`edge3X00`, `edge1000qat`, `virtual`.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ### Site Reference
 

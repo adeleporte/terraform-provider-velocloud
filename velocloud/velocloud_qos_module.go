@@ -9,10 +9,18 @@ import (
 )
 
 // GetConfiguration ...
-func GetQosModule(c *Client, profileid int) (interface{}, error) {
+func GetQosModule(c *Client, enterpriseid int, profileid int) (interface{}, error) {
 
-	var jsonBody = []byte(fmt.Sprintf(`{"id": %d, "with": ["modules"]}`, profileid))
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), bytes.NewBuffer(jsonBody))
+	body := GetConfigurationDeviceSettingsModuleBody{
+		ID:           profileid,
+		EnterpriseID: enterpriseid,
+		With:         []string{"modules"},
+	}
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), buf)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -50,9 +58,9 @@ func GetQosModule(c *Client, profileid int) (interface{}, error) {
 }
 
 // GetDefaultRule ...
-func GetQosRules(c *Client, profile_id int, segment_id int) ([]interface{}, error) {
+func GetQosRules(c *Client, enterpriseid int, profile_id int, segment_id int) ([]interface{}, error) {
 
-	qosmodule, err := GetQosModule(c, profile_id)
+	qosmodule, err := GetQosModule(c, enterpriseid, profile_id)
 
 	if err != nil {
 		return nil, err
@@ -70,9 +78,9 @@ func GetQosRules(c *Client, profile_id int, segment_id int) ([]interface{}, erro
 }
 
 // GetDefaultQosRules ...
-func GetDefaultQosRules(c *Client, profile_id int, segment_id int) ([]interface{}, error) {
+func GetDefaultQosRules(c *Client, enterpriseid int, profile_id int, segment_id int) ([]interface{}, error) {
 
-	qosmodule, err := GetQosModule(c, profile_id)
+	qosmodule, err := GetQosModule(c, enterpriseid, profile_id)
 
 	if err != nil {
 		return nil, err
@@ -90,10 +98,11 @@ func GetDefaultQosRules(c *Client, profile_id int, segment_id int) ([]interface{
 }
 
 // UpdateConfigurationModule ...
-func UpdateConfigurationModule(c *Client, qos_module_id int, data map[string]interface{}) (interface{}, error) {
+func UpdateConfigurationModule(c *Client, enterpriseid int, qos_module_id int, data map[string]interface{}) (interface{}, error) {
 
 	body := updateConfigurationModuleBody{
-		ID: qos_module_id,
+		ID:           qos_module_id,
+		EnterpriseID: enterpriseid,
 		Update: updateConfigurationModule{
 			Name: "QOS",
 			Data: data,

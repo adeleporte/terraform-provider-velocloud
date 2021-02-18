@@ -22,196 +22,197 @@ func resourceEdge() *schema.Resource {
 		UpdateContext: resourceEdgeUpdate,
 		DeleteContext: resourceEdgeDelete,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"configurationid": &schema.Schema{
+			"configurationid": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"enterpriseid": &schema.Schema{
+			"enterpriseid": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Default:  0,
 			},
-			"modelnumber": &schema.Schema{
+			"modelnumber": {
 				Type:         schema.TypeString,
 				Required:     true,
 				ValidateFunc: validation.StringInSlice(EdgeModels, false),
 			},
-			"serialnumber": &schema.Schema{
+			"serialnumber": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"haenabled": &schema.Schema{
+			"haenabled": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"generatecertificate": &schema.Schema{
+			"generatecertificate": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"subjectcn": &schema.Schema{
+			"subjectcn": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"subjecto": &schema.Schema{
+			"subjecto": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"subjectou": &schema.Schema{
+			"subjectou": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"challengepassword": &schema.Schema{
+			"challengepassword": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"privatekeypassword": &schema.Schema{
+			"privatekeypassword": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"custominfo": &schema.Schema{
+			"custominfo": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"site": &schema.Schema{
+			"site": {
 				Type:        schema.TypeList,
 				Description: "Site description",
 				MaxItems:    1,
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"contactname": &schema.Schema{
+						"contactname": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"contactphone": &schema.Schema{
+						"contactphone": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"contactmobile": &schema.Schema{
+						"contactmobile": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"contactemail": &schema.Schema{
+						"contactemail": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"streetaddress": &schema.Schema{
+						"streetaddress": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"streetaddress2": &schema.Schema{
+						"streetaddress2": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"city": &schema.Schema{
+						"city": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"state": &schema.Schema{
+						"state": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"country": &schema.Schema{
+						"country": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"postalcode": &schema.Schema{
+						"postalcode": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"lat": &schema.Schema{
+						"lat": {
 							Type:     schema.TypeFloat,
 							Optional: true,
 						},
-						"lon": &schema.Schema{
+						"lon": {
 							Type:     schema.TypeFloat,
 							Optional: true,
 						},
-						"timezone": &schema.Schema{
+						"timezone": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"locale": &schema.Schema{
+						"locale": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingsameaslocation": &schema.Schema{
+						"shippingsameaslocation": {
 							Type:     schema.TypeBool,
 							Optional: true,
 						},
-						"shippingcontactname": &schema.Schema{
+						"shippingcontactname": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingstreetaddress": &schema.Schema{
+						"shippingstreetaddress": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingstreetaddress2": &schema.Schema{
+						"shippingstreetaddress2": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingcity": &schema.Schema{
+						"shippingcity": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingcountry": &schema.Schema{
+						"shippingcountry": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"shippingpostalcode": &schema.Schema{
+						"shippingpostalcode": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
 					},
 				},
 			},
-			"activationkey": &schema.Schema{
+			"activationkey": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"activationstate": &schema.Schema{
+			"activationstate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"edgestate": &schema.Schema{
+			"edgestate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"hastate": &schema.Schema{
+			"hastate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"islive": &schema.Schema{
+			"islive": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"servicestate": &schema.Schema{
+			"servicestate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"edgeprofileid": &schema.Schema{
+			"edgeprofileid": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
@@ -223,6 +224,11 @@ func resourceEdgeCreate(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
 
 	site_schema := d.Get("site").([]interface{})
 	site_map := site_schema[0].(map[string]interface{})
@@ -282,7 +288,7 @@ func resourceEdgeCreate(ctx context.Context, d *schema.ResourceData, m interface
 
 	edge := velo.Enterprise_provision_edge{
 		Name:                d.Get("name").(string),
-		EnterpriseID:        d.Get("enterpriseid").(int),
+		EnterpriseID:        enterprise_id,
 		ConfigurationID:     d.Get("configurationid").(int),
 		ModelNumber:         d.Get("modelnumber").(string),
 		SerialNumber:        d.Get("serialnumber").(string),
@@ -319,7 +325,8 @@ func resourceEdgeRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	enterprise_id := d.Get("enterpriseid").(int)
 
 	edge := velo.Enterprise_get_edge{
-		ID: edge_id,
+		ID:           edge_id,
+		EnterpriseID: enterprise_id,
 	}
 
 	resp, err := velo.ReadEdge(client, edge)

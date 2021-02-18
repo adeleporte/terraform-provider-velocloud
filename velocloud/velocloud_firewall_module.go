@@ -130,8 +130,9 @@ type ConfigurationFirewallModule struct {
 }
 
 type UpdateConfigurationFirewallModuleBody struct {
-	ID     int                         `json:"id"`
-	Update ConfigurationFirewallModule `json:"_update"`
+	ID           int                         `json:"id"`
+	EnterpriseID int                         `json:"enterpriseId,omitempty"`
+	Update       ConfigurationFirewallModule `json:"_update"`
 }
 
 type UpdateConfigurationFirewallModule_result struct {
@@ -156,10 +157,18 @@ type GetConfigurationModulesBody_result struct {
 }
 
 // GetConfiguration ...
-func GetFirewallModule(c *Client, profileid int) (interface{}, error) {
+func GetFirewallModule(c *Client, enterpriseid int, profileid int) (interface{}, error) {
 
-	var jsonBody = []byte(fmt.Sprintf(`{"id": %d, "with": ["modules"]}`, profileid))
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), bytes.NewBuffer(jsonBody))
+	body := GetConfigurationDeviceSettingsModuleBody{
+		ID:           profileid,
+		EnterpriseID: enterpriseid,
+		With:         []string{"modules"},
+	}
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), buf)
 
 	if err != nil {
 		fmt.Println(err.Error())

@@ -14,13 +14,18 @@ func dataSourceAddressGroup() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceAddressGroupRead,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"logicalid": &schema.Schema{
+			"logicalid": {
 				Type:     schema.TypeString,
 				Computed: true,
+			},
+			"enterpriseid": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
 			},
 		},
 	}
@@ -30,10 +35,17 @@ func dataSourceAddressGroupRead(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
+
 	name := d.Get("name").(string)
 
 	address_group := velo.Enterprise_get_address_group{
-		Type: "address_group",
+		Type:         "address_group",
+		EnterpriseID: enterprise_id,
 	}
 
 	resp, err := velo.GetAddressGroup(client, address_group)

@@ -19,31 +19,32 @@ func resourceDeviceSettings() *schema.Resource {
 		UpdateContext: resourceDeviceSettingsUpdate,
 		DeleteContext: resourceDeviceSettingsDelete,
 		Schema: map[string]*schema.Schema{
-			"profile": &schema.Schema{
+			"profile": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"enterpriseid": &schema.Schema{
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"segment": &schema.Schema{
+			"enterpriseid": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  0,
 			},
-			"vlan": &schema.Schema{
+			"segment": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
+			"vlan": {
 				Type:        schema.TypeList,
 				Description: "Vlan description",
 				MaxItems:    1,
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"cidr_ip": &schema.Schema{
+						"cidr_ip": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"cidr_prefix": &schema.Schema{
+						"cidr_prefix": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Default:  24,
@@ -51,39 +52,39 @@ func resourceDeviceSettings() *schema.Resource {
 					},
 				},
 			},
-			"routed_interface": &schema.Schema{
+			"routed_interface": {
 				Type:        schema.TypeList,
 				Description: "Interface description",
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"cidr_ip": &schema.Schema{
+						"cidr_ip": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"cidr_prefix": &schema.Schema{
+						"cidr_prefix": {
 							Type:     schema.TypeInt,
 							Optional: true,
 							Default:  24,
 						},
-						"gateway": &schema.Schema{
+						"gateway": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"netmask": &schema.Schema{
+						"netmask": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"type": &schema.Schema{
+						"type": {
 							Type:     schema.TypeString,
 							Optional: true,
 							Default:  "DHCP",
 						},
-						"override": &schema.Schema{
+						"override": {
 							Type:     schema.TypeBool,
 							Optional: true,
 							Default:  true,
@@ -102,14 +103,14 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 
 	// Get info from the schema
 	edgeprofile_id, _ := d.Get("profile").(int)
-	//enterprise_id := d.Get("enterpriseid").(int)
+	enterprise_id := d.Get("enterpriseid").(int)
 	vlan := (d.Get("vlan").([]interface{}))[0].(map[string]interface{})
 	cidr_ip := vlan["cidr_ip"].(string)
 	cidr_prefix := vlan["cidr_prefix"].(int)
 
 	routed_interfaces := d.Get("routed_interface").([]interface{})
 
-	dmodule, err := velo.GetDeviceSettingsModule(client, edgeprofile_id)
+	dmodule, err := velo.GetDeviceSettingsModule(client, enterprise_id, edgeprofile_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -148,7 +149,7 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 
 	log.Println(buf)
 
-	_, err = velo.UpdateDeviceSettingsModule(client, id, data)
+	_, err = velo.UpdateDeviceSettingsModule(client, enterprise_id, id, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -161,12 +162,16 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 func resourceDeviceSettingsRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
+	// To be implemented
+
 	return diags
 
 }
 
 func resourceDeviceSettingsUpdate(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	//var diags diag.Diagnostics
+
+	// To be implemented
 
 	return resourceDeviceSettingsCreate(ctx, d, m)
 
@@ -179,11 +184,15 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 
 	// Get info from the schema
 	edgeprofile_id, _ := d.Get("profile").(int)
-	//enterprise_id := d.Get("enterpriseid").(int)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
 
 	routed_interfaces := d.Get("routed_interface").([]interface{})
 
-	dmodule, err := velo.GetDeviceSettingsModule(client, edgeprofile_id)
+	dmodule, err := velo.GetDeviceSettingsModule(client, enterprise_id, edgeprofile_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -223,7 +232,7 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 
 	log.Println(buf)
 
-	_, err = velo.UpdateDeviceSettingsModule(client, id, data)
+	_, err = velo.UpdateDeviceSettingsModule(client, enterprise_id, id, data)
 	if err != nil {
 		return diag.FromErr(err)
 	}
