@@ -38,13 +38,27 @@ type UpdateConfigurationDeviceSettingsModule_result struct {
 	Rows  int    `json:"rows"`
 }
 
+type GetConfigurationDeviceSettingsModuleBody struct {
+	ID           int      `json:"id"`
+	EnterpriseID int      `json:"enterpriseId,omitempty"`
+	With         []string `json:"with"`
+}
+
 // GetConfiguration ...
-func GetDeviceSettingsModule(c *Client, profileid int) (map[string]interface{}, error) {
+func GetDeviceSettingsModule(c *Client, enterpriseid int, profileid int) (map[string]interface{}, error) {
 
 	var dd map[string]interface{}
 
-	var jsonBody = []byte(fmt.Sprintf(`{"id": %d, "with": ["modules"]}`, profileid))
-	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), bytes.NewBuffer(jsonBody))
+	body := GetConfigurationDeviceSettingsModuleBody{
+		ID:           profileid,
+		EnterpriseID: enterpriseid,
+		With:         []string{"modules"},
+	}
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/getConfiguration", c.HostURL), buf)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -81,12 +95,13 @@ func GetDeviceSettingsModule(c *Client, profileid int) (map[string]interface{}, 
 }
 
 // UpdateDeviceSettingsModule ...
-func UpdateDeviceSettingsModule(c *Client, devicemoduleid int, data map[string]interface{}) (UpdateConfigurationDeviceSettingsModule_result, error) {
+func UpdateDeviceSettingsModule(c *Client, enterpriseid int, devicemoduleid int, data map[string]interface{}) (UpdateConfigurationDeviceSettingsModule_result, error) {
 
 	resp := UpdateConfigurationDeviceSettingsModule_result{}
 
 	body := updateConfigurationModuleBody{
-		ID: devicemoduleid,
+		ID:           devicemoduleid,
+		EnterpriseID: enterpriseid,
 		Update: updateConfigurationModule{
 			Name: "deviceSettings",
 			Data: data,

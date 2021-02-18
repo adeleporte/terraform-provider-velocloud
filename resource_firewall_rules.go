@@ -17,165 +17,166 @@ func resourceFirewallRules() *schema.Resource {
 		UpdateContext: resourceFirewallRulesUpdate,
 		DeleteContext: resourceFirewallRulesDelete,
 		Schema: map[string]*schema.Schema{
-			"profile": &schema.Schema{
+			"profile": {
 				Type:     schema.TypeInt,
 				Required: true,
 			},
-			"enterpriseid": &schema.Schema{
-				Type:     schema.TypeInt,
-				Optional: true,
-			},
-			"segment": &schema.Schema{
+			"enterpriseid": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  0,
 			},
-			"firewall_status": &schema.Schema{
+			"segment": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
+			"firewall_status": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
-			"firewall_stateful": &schema.Schema{
+			"firewall_stateful": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"firewall_logging": &schema.Schema{
+			"firewall_logging": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"firewall_syslog": &schema.Schema{
+			"firewall_syslog": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
 			},
-			"rule": &schema.Schema{
+			"rule": {
 				Type:        schema.TypeList,
 				Description: "Rules description",
 				Required:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"name": &schema.Schema{
+						"name": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"dip": &schema.Schema{
+						"dip": {
 							Type:     schema.TypeString,
 							Default:  "any",
 							Optional: true,
 						},
-						"sip": &schema.Schema{
+						"sip": {
 							Type:     schema.TypeString,
 							Default:  "any",
 							Optional: true,
 						},
-						"dsm": &schema.Schema{
+						"dsm": {
 							Type:     schema.TypeString,
 							Default:  "any",
 							Optional: true,
 						},
-						"ssm": &schema.Schema{
+						"ssm": {
 							Type:     schema.TypeString,
 							Default:  "any",
 							Optional: true,
 						},
-						"d_port_low": &schema.Schema{
+						"d_port_low": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"d_port_high": &schema.Schema{
+						"d_port_high": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"s_port_low": &schema.Schema{
+						"s_port_low": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"s_port_high": &schema.Schema{
+						"s_port_high": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"s_address_group": &schema.Schema{
+						"s_address_group": {
 							Type:     schema.TypeString,
 							Default:  "",
 							Optional: true,
 						},
-						"d_address_group": &schema.Schema{
+						"d_address_group": {
 							Type:     schema.TypeString,
 							Default:  "",
 							Optional: true,
 						},
-						"s_port_group": &schema.Schema{
+						"s_port_group": {
 							Type:     schema.TypeString,
 							Default:  "",
 							Optional: true,
 						},
-						"d_port_group": &schema.Schema{
+						"d_port_group": {
 							Type:     schema.TypeString,
 							Default:  "",
 							Optional: true,
 						},
-						"appid": &schema.Schema{
+						"appid": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"classid": &schema.Schema{
+						"classid": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"dscp": &schema.Schema{
+						"dscp": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"svlan": &schema.Schema{
+						"svlan": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"dvlan": &schema.Schema{
+						"dvlan": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"hostname": &schema.Schema{
+						"hostname": {
 							Type:     schema.TypeString,
 							Default:  "",
 							Optional: true,
 						},
-						"os_version": &schema.Schema{
+						"os_version": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"proto": &schema.Schema{
+						"proto": {
 							Type:     schema.TypeInt,
 							Default:  -1,
 							Optional: true,
 						},
-						"smac": &schema.Schema{
+						"smac": {
 							Type:     schema.TypeString,
 							Default:  "any",
 							Optional: true,
 						},
-						"d_rule_type": &schema.Schema{
+						"d_rule_type": {
 							Type:     schema.TypeString,
 							Default:  "prefix",
 							Optional: true,
 						},
-						"s_rule_type": &schema.Schema{
+						"s_rule_type": {
 							Type:     schema.TypeString,
 							Default:  "prefix",
 							Optional: true,
 						},
-						"action": &schema.Schema{
+						"action": {
 							Type:     schema.TypeString,
 							Default:  "allow",
 							Optional: true,
@@ -194,8 +195,9 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 	profile_id := d.Get("profile").(int)
 	segment_id := d.Get("segment").(int)
 	rulesFromSchema := d.Get("rule").([]interface{})
+	enterprise_id := d.Get("enterpriseid").(int)
 
-	fwmodule, err := velo.GetFirewallModule(client, profile_id)
+	fwmodule, err := velo.GetFirewallModule(client, enterprise_id, profile_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -245,7 +247,7 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 		FirewallLoggingEnabled:  d.Get("firewall_logging").(bool),
 		SyslogForwarding:        d.Get("firewall_syslog").(bool),
 		Inbound:                 []velo.FirewallInboundRule{},
-		Segments: []velo.FirewallSegment{velo.FirewallSegment{
+		Segments: []velo.FirewallSegment{{
 			Outbound: outbound_rules,
 			Segment: velo.ModuleSegmentMetaData{
 				SegmentID: segment_id,
@@ -260,8 +262,9 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	firewall := velo.UpdateConfigurationFirewallModuleBody{
-		ID:     int(fw_module_id),
-		Update: update,
+		ID:           int(fw_module_id),
+		EnterpriseID: d.Get("enterpriseid").(int),
+		Update:       update,
 	}
 
 	_, err = velo.UpdateFirewallModule(client, firewall)
@@ -345,8 +348,13 @@ func resourceFirewallRulesDelete(ctx context.Context, d *schema.ResourceData, m 
 	client := m.(*velo.Client)
 	profile_id := d.Get("profile").(int)
 	segment_id := d.Get("segment").(int)
+	enterprise_id := d.Get("enterpriseid").(int)
 
-	fwmodule, err := velo.GetFirewallModule(client, profile_id)
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
+
+	fwmodule, err := velo.GetFirewallModule(client, enterprise_id, profile_id)
 	if err != nil {
 		return diag.FromErr(err)
 	}
@@ -359,7 +367,7 @@ func resourceFirewallRulesDelete(ctx context.Context, d *schema.ResourceData, m 
 	fw_data := velo.FirewallData{
 		FirewallEnabled: true,
 		Inbound:         []velo.FirewallInboundRule{},
-		Segments: []velo.FirewallSegment{velo.FirewallSegment{
+		Segments: []velo.FirewallSegment{{
 			Outbound: outbound_rules,
 			Segment: velo.ModuleSegmentMetaData{
 				SegmentID: segment_id,
@@ -374,8 +382,9 @@ func resourceFirewallRulesDelete(ctx context.Context, d *schema.ResourceData, m 
 	}
 
 	firewall := velo.UpdateConfigurationFirewallModuleBody{
-		ID:     int(fw_module_id),
-		Update: update,
+		ID:           int(fw_module_id),
+		EnterpriseID: d.Get("enterpriseid").(int),
+		Update:       update,
 	}
 
 	_, err = velo.UpdateFirewallModule(client, firewall)

@@ -43,6 +43,7 @@ output "my_group" {
 * `name` - (Required) Name of the port group.
 * `description` - (Optional) Description of the port group.
 * `range` - (Optional) List of port group ranges.
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ### Range argument Reference
 * `proto` - (Required) IP Protocol to match. Valid values: `6` (TCP), `17` (UDP).

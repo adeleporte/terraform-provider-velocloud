@@ -18,35 +18,40 @@ func resourceAddressGroup() *schema.Resource {
 		UpdateContext: resourceAddressGroupUpdate,
 		DeleteContext: resourceAddressGroupDelete,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"enterpriseid": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"logicalid": &schema.Schema{
+			"logicalid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"range": &schema.Schema{
+			"range": {
 				Type:        schema.TypeList,
 				Description: "List of IP ranges",
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"ip": &schema.Schema{
+						"ip": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
-						"mask": &schema.Schema{
+						"mask": {
 							Type:     schema.TypeString,
 							Default:  "255.255.255.255",
 							Optional: true,
 						},
-						"rule_type": &schema.Schema{
+						"rule_type": {
 							Type:     schema.TypeString,
 							Default:  "exact",
 							Optional: true,
@@ -62,6 +67,11 @@ func resourceAddressGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
 
 	ip_ranges := d.Get("range").([]interface{})
 	data := make([]velo.Address_group_data, len(ip_ranges))
@@ -74,10 +84,11 @@ func resourceAddressGroupCreate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	address_group := velo.Enterprise_insert_address_group{
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Type:        "address_group",
-		Data:        data,
+		Name:         d.Get("name").(string),
+		Description:  d.Get("description").(string),
+		Type:         "address_group",
+		Data:         data,
+		EnterpriseID: enterprise_id,
 	}
 
 	resp, err := velo.InsertAddressGroup(client, address_group)
@@ -99,7 +110,8 @@ func resourceAddressGroupRead(ctx context.Context, d *schema.ResourceData, m int
 	id, _ := strconv.Atoi(d.Id())
 
 	address_group := velo.Enterprise_get_address_group{
-		Type: "address_group",
+		Type:         "address_group",
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
 	resp, err := velo.GetAddressGroup(client, address_group)
@@ -134,18 +146,17 @@ func resourceAddressGroupUpdate(ctx context.Context, d *schema.ResourceData, m i
 	}
 
 	address_group := velo.Enterprise_update_address_group{
-		ID:          id,
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Data:        data,
+		ID:           id,
+		Name:         d.Get("name").(string),
+		Description:  d.Get("description").(string),
+		Data:         data,
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
-	resp, err := velo.UpdateAddressGroup(client, address_group)
+	_, err := velo.UpdateAddressGroup(client, address_group)
 	if err != nil {
 		return diag.FromErr(err)
 	}
-
-	d.SetId(fmt.Sprintf("%d", resp.ID))
 
 	resourceAddressGroupRead(ctx, d, m)
 
@@ -160,7 +171,8 @@ func resourceAddressGroupDelete(ctx context.Context, d *schema.ResourceData, m i
 	id, _ := strconv.Atoi(d.Id())
 
 	address_group := velo.Enterprise_delete_address_group{
-		ID: id,
+		ID:           id,
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
 	_, err := velo.DeleteAddressGroup(client, address_group)

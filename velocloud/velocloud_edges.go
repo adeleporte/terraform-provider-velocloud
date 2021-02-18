@@ -91,7 +91,6 @@ type Enterprise_update_edge struct {
 }
 
 type Enterprise_update_edge_result struct {
-	ID    int    `json:"id"`
 	Error string `json:"error"`
 	Rows  int    `json:"rows"`
 }
@@ -280,7 +279,7 @@ func DeleteEdge(c *Client, body Edge_delete_edge) (Edge_delete_edge_result, erro
 	return resp, nil
 }
 
-// GetEdges ...
+// GetEdgeSpecificProfile ...
 func GetEdgeSpecificProfile(c *Client, edge_id int, enterprise_id int) (int, error) {
 
 	resp := []Edge_get_edge_configuration_stack_result{}

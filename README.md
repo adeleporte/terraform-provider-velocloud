@@ -109,22 +109,55 @@ match.
 
 # Usage
 
-In order to use the Velocloud Terraform provider you must first configure the provider to communicate with the Velocloud Orchestrator. The Velocloud Orchestrator is the system which serves the VMware SDWAN REST API and provides a way to configure the desired state of the Velocloud system. The configuration of the Velocloud provider requires the hostname and a API token of the Velocloud Orchestrator (VCO).
+In order to use the Velocloud Terraform provider you must first configure the provider to communicate with the Velocloud Orchestrator. The Velocloud Orchestrator is the system which serves the VMware SDWAN REST API and provides a way to configure the desired state of the Velocloud system.
 
+## API Key
+The configuration of the Velocloud provider requires the hostname and a API token of the Velocloud Orchestrator (VCO).
+
+## Username/Password
+The configuration of the Velocloud provider requires the hostname of the Velocloud Orchestrator (VCO) + a login/password
+
+## Operator level
+The configuration of the Velocloud provider requires the hostname of the Velocloud Orchestrator (VCO) + a login/password and operator=true
 
 
 ## Example of Provider Configuration
 
 ```hcl
 provider "velocloud" {
-  vco       = "vco.vcn.net"
-  token     = "jhkjlhjkhjkhjkhjkhhjkhkjhkjhjkhkjhkjhjkhjkh"
+  vco       = "https://vco.vcn.cloud/portal/rest"
+  token     = "my-token"
+}
+```
+
+## Example of Provider Configuration with Username/Password Access
+
+```hcl
+provider "velocloud" {
+  vco       = "https://vco.vcn.cloud/portal/rest"
+
+  username                = "supertest@vcn.cloud"
+  password                = "changeme!"
+}
+```
+
+## Example of Provider Configuration with Operator Level Access
+
+```hcl
+provider "velocloud" {
+  vco       = "https://vco.vcn.cloud/portal/rest"
+
+  username                = "supertest@vcn.cloud"
+  password                = "changeme!"
+
+  skip_ssl_verification   = true
+  operator                = true
 }
 ```
 
 ## Example of Setting Environment Variables
 
 ```sh
-export VCO_URL      = "vco.vcn.cloud"
-export VCO_TOKEN    = "default"
+export VCO_URL      = "https://vco.vcn.cloud/portal/rest"
+export VCO_TOKEN    = "my-token"
 ```

@@ -37,6 +37,7 @@ resource "velocloud_firewall_rules" "newtffw" {
 * `firewall_stateful` - (Optional) Indicates if firewalling should be stateful. Default to `false`
 * `firewall_logging` - (Optional) Status of firewall logging. Default to `false`
 * `firewall_syslog` - (Optional) Indicates if firewall should send logs as syslog. Default to `false`
+* `enterpriseid` - (Optional) Enterprise ID (Customer). To be specified only if logged as an operator
 
 ### Rule reference
 * `name` - (Required) Name of the rule.

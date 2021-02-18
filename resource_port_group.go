@@ -18,34 +18,39 @@ func resourcePortGroup() *schema.Resource {
 		UpdateContext: resourcePortGroupUpdate,
 		DeleteContext: resourcePortGroupDelete,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"description": &schema.Schema{
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
 			},
-			"logicalid": &schema.Schema{
+			"enterpriseid": {
+				Type:     schema.TypeInt,
+				Optional: true,
+				Default:  0,
+			},
+			"logicalid": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"range": &schema.Schema{
+			"range": {
 				Type:        schema.TypeList,
 				Description: "List of Port ranges",
 				Optional:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
-						"proto": &schema.Schema{
+						"proto": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"port_low": &schema.Schema{
+						"port_low": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
-						"port_high": &schema.Schema{
+						"port_high": {
 							Type:     schema.TypeInt,
 							Required: true,
 						},
@@ -60,6 +65,11 @@ func resourcePortGroupCreate(ctx context.Context, d *schema.ResourceData, m inte
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
 
 	port_ranges := d.Get("range").([]interface{})
 	data := make([]velo.Port_group_data, len(port_ranges))
@@ -73,10 +83,11 @@ func resourcePortGroupCreate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	port_group := velo.Enterprise_insert_port_group{
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Type:        "port_group",
-		Data:        data,
+		Name:         d.Get("name").(string),
+		Description:  d.Get("description").(string),
+		Type:         "port_group",
+		Data:         data,
+		EnterpriseID: enterprise_id,
 	}
 
 	resp, err := velo.InsertPortGroup(client, port_group)
@@ -98,7 +109,8 @@ func resourcePortGroupRead(ctx context.Context, d *schema.ResourceData, m interf
 	id, _ := strconv.Atoi(d.Id())
 
 	Port_group := velo.Enterprise_get_port_group{
-		Type: "port_group",
+		Type:         "port_group",
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
 	resp, err := velo.GetPortGroup(client, Port_group)
@@ -133,18 +145,19 @@ func resourcePortGroupUpdate(ctx context.Context, d *schema.ResourceData, m inte
 	}
 
 	Port_group := velo.Enterprise_update_port_group{
-		ID:          id,
-		Name:        d.Get("name").(string),
-		Description: d.Get("description").(string),
-		Data:        data,
+		ID:           id,
+		Name:         d.Get("name").(string),
+		Description:  d.Get("description").(string),
+		Data:         data,
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
-	resp, err := velo.UpdatePortGroup(client, Port_group)
+	_, err := velo.UpdatePortGroup(client, Port_group)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(fmt.Sprintf("%d", resp.ID))
+	//d.SetId(fmt.Sprintf("%d", resp.ID))
 
 	resourcePortGroupRead(ctx, d, m)
 
@@ -159,7 +172,8 @@ func resourcePortGroupDelete(ctx context.Context, d *schema.ResourceData, m inte
 	id, _ := strconv.Atoi(d.Id())
 
 	port_group := velo.Enterprise_delete_port_group{
-		ID: id,
+		ID:           id,
+		EnterpriseID: d.Get("enterpriseid").(int),
 	}
 
 	_, err := velo.DeletePortGroup(client, port_group)

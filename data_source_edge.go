@@ -14,35 +14,36 @@ func dataSourceEdge() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceEdgeRead,
 		Schema: map[string]*schema.Schema{
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"enterpriseid": &schema.Schema{
+			"enterpriseid": {
 				Type:     schema.TypeInt,
 				Optional: true,
+				Default:  0,
 			},
-			"activationkey": &schema.Schema{
+			"activationkey": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"activationstate": &schema.Schema{
+			"activationstate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"edgestate": &schema.Schema{
+			"edgestate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"hastate": &schema.Schema{
+			"hastate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"islive": &schema.Schema{
+			"islive": {
 				Type:     schema.TypeInt,
 				Computed: true,
 			},
-			"servicestate": &schema.Schema{
+			"servicestate": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -54,11 +55,18 @@ func dataSourceEdgeRead(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	client := m.(*velo.Client)
+	enterprise_id := d.Get("enterpriseid").(int)
+
+	if client.Operator && enterprise_id == 0 {
+		return diag.Errorf("Enterprise ID is missing (logged as an operator)")
+	}
+
 	edgename := d.Get("name").(string)
 	id, err := velo.GetEdges(client, edgename)
 
 	edge := velo.Enterprise_get_edge{
-		ID: id,
+		ID:           id,
+		EnterpriseID: enterprise_id,
 	}
 
 	resp, err := velo.ReadEdge(client, edge)
