@@ -128,7 +128,7 @@ provider "velocloud" {
 }
 ```
 
-## Example of Provider Configuration with Username/Password Access
+## Example of Provider Configuration with Username / Password Access
 
 ```hcl
 provider "velocloud" {
