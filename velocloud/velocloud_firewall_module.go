@@ -150,7 +150,7 @@ type UpdateConfigurationFirewallModule_result struct {
 type InsertConfigurationFirewallModule_result struct {
 	Error string `json:"error"`
 	Rows  int    `json:"rows"`
-	ID    string `json:"id"`
+	ID    int `json:"id"`
 }
 
 type GetConfigurationModulesBody struct {

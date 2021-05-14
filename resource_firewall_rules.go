@@ -268,7 +268,7 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 			return diag.FromErr(err)
 		}
 
-		d.SetId(result.ID)
+		d.SetId(fmt.Sprint(result.ID))
 
 	} else {
 		raw := fwmodule.(map[string]interface{})
