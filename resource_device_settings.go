@@ -347,12 +347,12 @@ func resourceDeviceSettingsDelete(ctx context.Context, d *schema.ResourceData, m
 	dhcp := network0["dhcp"].(map[string]interface{})
 
 	// Update the module
-	network0["cidrIp"] = nil
-	network0["cidrPrefix"] = nil
+	//network0["cidrIp"] = nil
+	//network0["cidrPrefix"] = nil
 	network0["advertise"] = true
 	network0["override"] = false
 
-	dhcp["enabled"] = true
+	dhcp["leaseTimeSeconds"] = 3600
 	dhcp["override"] = false
 
 	for _, v := range interfaces {
