@@ -280,7 +280,9 @@ func resourceDeviceSettingsCreate(ctx context.Context, d *schema.ResourceData, m
 		routes = append(routes, route)
 	}
 
-	data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"] = routes
+	if len(routes) != 0 {
+		data["segments"].([]interface{})[0].(map[string]interface{})["routes"].(map[string]interface{})["static"] = routes
+	}
 
 	buf := new(bytes.Buffer)
 	json.NewEncoder(buf).Encode(data)

@@ -12,25 +12,25 @@ terraform {
 
 provider velocloud {
   vco                     = "https://172.17.9.254/portal/rest"
-  username                = "supertest@velocloud.net"
-  password                = "changeme"
+  //username                = "supertest@velocloud.net"
+  //password                = "VMware1!"
   skip_ssl_verification   = true
-  operator                = true
-  #token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblV1aWQiOiJlYzJiYzQxMC0wNjIxLTRiMWQtYTk4My00YmZjMWYwY2M3OTIiLCJleHAiOjE2MzgyOTE1ODgwMDAsInV1aWQiOiI1YzgzMTMzNC0xZjZlLTExZWItODc3Ni0wMDUwNTZhZjg2MjYiLCJpYXQiOjE2MDY3NTU1OTR9.JbQqp5xWvlpABsOWu5FCrn0MGd9AAnFcBgst2oulKsY"
+  //operator                = true
+  token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlblV1aWQiOiJlYzJiYzQxMC0wNjIxLTRiMWQtYTk4My00YmZjMWYwY2M3OTIiLCJleHAiOjE2MzgyOTE1ODgwMDAsInV1aWQiOiI1YzgzMTMzNC0xZjZlLTExZWItODc3Ni0wMDUwNTZhZjg2MjYiLCJpYXQiOjE2MDY3NTU1OTR9.JbQqp5xWvlpABsOWu5FCrn0MGd9AAnFcBgst2oulKsY"
 }
-
+/*
 data "velocloud_enterprise" "lab" {
     name = "lab"
 }
-
+*/
 data "velocloud_profile" "default" {
-    enterpriseid = data.velocloud_enterprise.lab.id
+    //enterpriseid = data.velocloud_enterprise.lab.id
     name = "Quick Start Profile"
 }
 
 resource "velocloud_edge" "edge1" {
 
-  enterpriseid = data.velocloud_enterprise.lab.id
+  //enterpriseid = data.velocloud_enterprise.lab.id
   configurationid               = data.velocloud_profile.default.id
   modelnumber                   = "virtual"
 
@@ -57,7 +57,7 @@ resource "velocloud_edge" "edge1" {
   }
   
 }
-
+/*
 
 resource "velocloud_address_group" "test" {
   enterpriseid = data.velocloud_enterprise.lab.id
@@ -99,7 +99,7 @@ resource "velocloud_port_group" "test" {
     port_high   = 80
   }
 }
-
+*/
 /*
 data "velocloud_enterprise" "ent" {
     name = "test"
