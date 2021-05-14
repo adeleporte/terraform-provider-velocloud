@@ -197,14 +197,6 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 	rulesFromSchema := d.Get("rule").([]interface{})
 	enterprise_id := d.Get("enterpriseid").(int)
 
-	fwmodule, err := velo.GetFirewallModule(client, enterprise_id, profile_id)
-	if err != nil {
-		return diag.FromErr(err)
-	}
-
-	raw := fwmodule.(map[string]interface{})
-	fw_module_id := int(raw["id"].(float64))
-
 	outbound_rules := make([]velo.FirewallOutboundRule, len(rulesFromSchema))
 	for i, ruleFromSchema := range rulesFromSchema {
 		rule := ruleFromSchema.(map[string]interface{})
@@ -261,18 +253,40 @@ func resourceFirewallRulesCreate(ctx context.Context, d *schema.ResourceData, m 
 		Data: fw_data,
 	}
 
-	firewall := velo.UpdateConfigurationFirewallModuleBody{
-		ID:           int(fw_module_id),
-		EnterpriseID: d.Get("enterpriseid").(int),
-		Update:       update,
-	}
-
-	_, err = velo.UpdateFirewallModule(client, firewall)
+	fwmodule, err := velo.GetFirewallModule(client, enterprise_id, profile_id)
 	if err != nil {
-		return diag.FromErr(err)
-	}
+		// FW MODULE doesn't exist, Let's insert it
+		firewall := velo.InsertConfigurationFirewallModuleBody{
+			ConfigurationID: int(profile_id),
+			EnterpriseID:    d.Get("enterpriseid").(int),
+			Name:            "firewall",
+			Data:            fw_data,
+		}
 
-	d.SetId(fmt.Sprint(fw_module_id))
+		result, err := velo.InsertFirewallModule(client, firewall)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		d.SetId(result.ID)
+
+	} else {
+		raw := fwmodule.(map[string]interface{})
+		fw_module_id := int(raw["id"].(float64))
+
+		firewall := velo.UpdateConfigurationFirewallModuleBody{
+			ID:           int(fw_module_id),
+			EnterpriseID: d.Get("enterpriseid").(int),
+			Update:       update,
+		}
+
+		_, err = velo.UpdateFirewallModule(client, firewall)
+		if err != nil {
+			return diag.FromErr(err)
+		}
+
+		d.SetId(fmt.Sprint(fw_module_id))
+	}
 
 	resourceFirewallRulesRead(ctx, d, m)
 

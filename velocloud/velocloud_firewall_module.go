@@ -135,9 +135,22 @@ type UpdateConfigurationFirewallModuleBody struct {
 	Update       ConfigurationFirewallModule `json:"_update"`
 }
 
+type InsertConfigurationFirewallModuleBody struct {
+	ConfigurationID int          `json:"configurationId,omitempty"`
+	EnterpriseID    int          `json:"enterpriseId,omitempty"`
+	Name            string       `json:"name"`
+	Data            FirewallData `json:"data"`
+}
+
 type UpdateConfigurationFirewallModule_result struct {
 	Error string `json:"error"`
 	Rows  int    `json:"rows"`
+}
+
+type InsertConfigurationFirewallModule_result struct {
+	Error string `json:"error"`
+	Rows  int    `json:"rows"`
+	ID    string `json:"id"`
 }
 
 type GetConfigurationModulesBody struct {
@@ -273,4 +286,35 @@ func GetFirewallModules(c *Client, configurationId int, enterpriseId int) (Firew
 	fw := resp[0].Data
 
 	return fw, nil
+}
+
+// InsertFirewallModule ...
+func InsertFirewallModule(c *Client, body InsertConfigurationFirewallModuleBody) (InsertConfigurationFirewallModule_result, error) {
+
+	resp := InsertConfigurationFirewallModule_result{}
+
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(body)
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/configuration/insertConfigurationModule", c.HostURL), buf)
+	if err != nil {
+		fmt.Println(err)
+		return resp, err
+	}
+
+	// Send the request
+	r, err := c.doRequest(req)
+	if err != nil {
+		fmt.Println(err)
+		return resp, err
+	}
+
+	// parse response body
+	err = json.Unmarshal(r, &resp)
+	if err != nil {
+		fmt.Println(err)
+		return resp, err
+	}
+
+	return resp, nil
 }
